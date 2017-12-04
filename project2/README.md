@@ -1,5 +1,6 @@
 #Project 2 
-My projects are created using JavaFX for a graphical rendering engine.
+My projects are created using JavaFX for a graphical rendering engine. If there are any issues please let me know.
+
 ## Game 1 - A* Pathfinding
 
 ### Compile
@@ -57,5 +58,7 @@ Ant AI tree:
 
 Dead ants will remain motionless on the map.
 
-
 ### Design Decisions
+I decided to implement the decision making scheme using a robust State Machine as demonstrated in pseudo-code in the book. This required a lot of coding and lots of methods but I thought it would be good to go through the workings rather than a hard coded FSM and I wanted more modularity than decision trees could provide.
+
+I did not sort my code into folders but I've setup a structured syntax to the filenames. I have Action<Desc>, State<Desc>, and Transition<Desc>.

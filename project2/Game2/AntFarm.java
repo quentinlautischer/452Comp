@@ -7,8 +7,7 @@ public enum AntFarm {
     POISON,
     HOME;
 
-    public static Color getColor(AntFarm terrain)
-    {
+    public static Color getColor(AntFarm terrain) {
       switch (terrain){
         case FOOD:
           return Color.LIGHTGREEN;

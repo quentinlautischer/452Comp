@@ -26,8 +26,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.geometry.Rectangle2D;
 
-public class Game2 extends Application
-{
+public class Game2 extends Application {
+
     Long lastNanoTime;
     double updateTime;
     Random random = new Random();
@@ -48,10 +48,10 @@ public class Game2 extends Application
     Grid<ImageView> gridIvRender = null;
     CopyOnWriteArrayList<Ant> ants = new CopyOnWriteArrayList<Ant>();
 
-    Image food_img = new Image("food.png");
-    Image water_img = new Image("water.png");
-    Image poison_img = new Image("poison.png");
-    Image blank_img = new Image("blank.png");
+    Image food_img = new Image("res/food.png");
+    Image water_img = new Image("res/water.png");
+    Image poison_img = new Image("res/poison.png");
+    Image blank_img = new Image("res/blank.png");
     ImageView food_iv = new ImageView();
     ImageView water_iv = new ImageView();
     ImageView poison_iv = new ImageView();
@@ -61,22 +61,19 @@ public class Game2 extends Application
     Rectangle2D water_r = new Rectangle2D(0, 0, 340, 340);
     Rectangle2D poison_r = new Rectangle2D(0, 0, 200, 200);
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         if (args.length < 1)
             throw new RuntimeException("Not enough args");
         launch(args);
     }
 
 
-    private void initGridRender(Group root)
-    {
+    private void initGridRender(Group root) {
         gridRender = new Grid<Rectangle>(cols, rows);
         gridIvRender = new Grid<ImageView>(cols, rows);
 
         int idx = 0;
-        for(AntFarm t : grid)
-        {   
+        for(AntFarm t : grid) {   
             int col = grid.colFromIdx(idx);
             int row = grid.rowFromIdx(idx);
             
@@ -129,14 +126,12 @@ public class Game2 extends Application
         poison_iv.setCache(true);
     }
 
-    private void renderGrid(Group root)
-    {
+    private void renderGrid(Group root) {
         if (gridRender == null)
             initGridRender(root);
 
         int idx = 0;
-        for(AntFarm t : grid)
-        {
+        for(AntFarm t : grid) {
             int col = grid.colFromIdx(idx);
             int row = grid.rowFromIdx(idx);
             Rectangle r = gridRender.get(idx);
@@ -151,14 +146,12 @@ public class Game2 extends Application
         }
 
         idx = 0;
-        for(AntFarm t : grid)
-        {
+        for(AntFarm t : grid) {
             int col = grid.colFromIdx(idx);
             int row = grid.rowFromIdx(idx);
             ImageView iv = gridIvRender.get(idx);
             
-            switch(t)
-            {
+            switch(t) {
                 case FOOD:
                     iv.setImage(food_iv.getImage());
                     iv.setViewport(food_iv.getViewport());
@@ -187,14 +180,12 @@ public class Game2 extends Application
         }
     }
 
-    private void renderAnts(Group root)
-    {
+    private void renderAnts(Group root) {
         for(Ant ant : ants)
             ant.render(root);
     }
 
-    private void spawnFood()
-    {
+    private void spawnFood() {
         if (random.nextDouble()>foodSpawnChance)
             return;
 
@@ -203,8 +194,7 @@ public class Game2 extends Application
         grid.replace(idx, AntFarm.FOOD);
     }
 
-    private void spawnWater()
-    {
+    private void spawnWater() {
         if (random.nextDouble()>waterSpawnChance)
             return;
 
@@ -213,8 +203,7 @@ public class Game2 extends Application
         grid.replace(idx, AntFarm.WATER);
     }
 
-    private void spawnPoison()
-    {
+    private void spawnPoison() {
         if (random.nextDouble()>poisonSpawnChance)
             return;
 
@@ -224,11 +213,10 @@ public class Game2 extends Application
     }
 
     @Override
-    public void start(Stage theStage)
-    {
+    public void start(Stage theStage) {
         theStage.setTitle( "Game2 - AntFarm" );
         for(int i=0;i<Integer.parseInt(getParameters().getRaw().get(0));i++)
-            ants.add(new Ant(i));
+            ants.add(new Ant(i, grid));
         
         for(int i = 0; i < cols*rows; i++)
             grid.add(AntFarm.EMPTY);
@@ -251,11 +239,9 @@ public class Game2 extends Application
 
         lastNanoTime = new Long( System.nanoTime() );
 
-        new AnimationTimer()
-        {   
-            Ant.AntStatus status = Ant.AntStatus.ALIVE;
-            public void handle(long currentNanoTime)
-            {
+        new AnimationTimer() {   
+            AntStatus status = AntStatus.ALIVE;
+            public void handle(long currentNanoTime) {
                 // calculate time since last update.
                 double elapsedTime = (currentNanoTime - lastNanoTime) / 1000000000.0;
                 lastNanoTime = currentNanoTime;
@@ -267,16 +253,14 @@ public class Game2 extends Application
                     updateTime = 0.0;
 
                 //logic
-                for(Ant ant : ants)
-                {
+                for(Ant ant : ants) {
                   status = ant.update(grid);
-                  switch(status)
-                  {
+                  switch(status) {
                     case DEAD:
                         ants.remove(ant);
                         break;
                     case BIRTHING:
-                        ants.add(new Ant((long)1.0));
+                        ants.add(new Ant(currentNanoTime, grid));
                         break;
                     default:
                         break;

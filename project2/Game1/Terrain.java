@@ -8,8 +8,7 @@ public enum Terrain {
     START,
     FINISH;
 
-    public static Color getColor(Terrain terrain)
-    {
+    public static Color getColor(Terrain terrain) {
       switch (terrain){
         case START:
           return Color.BLUE;
@@ -28,8 +27,7 @@ public enum Terrain {
       } 
     }
 
-    public static int getCost(Terrain terrain)
-    {
+    public static int getCost(Terrain terrain) {
       switch (terrain){
         case START:
           return 0;
@@ -48,8 +46,7 @@ public enum Terrain {
       }
     }
 
-    public static char getChar(Terrain terrain)
-    {
+    public static char getChar(Terrain terrain) {
       switch (terrain){
         case START:
           return 's';
@@ -68,8 +65,7 @@ public enum Terrain {
       }
     }
 
-    public static Terrain getTerrain(char index)
-    {
+    public static Terrain getTerrain(char index) {
       switch(index){
         case '1':
           return OPEN;

@@ -1,18 +1,15 @@
 import java.lang.Math;
 
-class Heuristic
-{
+class Heuristic {
   Grid<Node> grid;
   Node goalNode = null;
 
-  public Heuristic(Grid<Node> grid, Node goalNode)
-  {
+  public Heuristic(Grid<Node> grid, Node goalNode) {
     this.goalNode = goalNode;
     this.grid = grid;
   }
 
-  public int estimate(Node node)
-  {
+  public int estimate(Node node) {
     int idx = grid.idxFromObj(node);
     int row = grid.rowFromIdx(idx);
     int col = grid.colFromIdx(idx);
@@ -22,8 +19,7 @@ class Heuristic
     int colGoal = grid.colFromIdx(idxGoal);
 
     int hcost = 0;
-    while(row!=rowGoal & col!=colGoal)
-    {
+    while(row!=rowGoal & col!=colGoal) {
       int pre_idx = grid.idxFromColRow(col, row);
       if (col < colGoal)
         col++;

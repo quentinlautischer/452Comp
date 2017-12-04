@@ -16,8 +16,8 @@ import java.io.FileNotFoundException;
 
 import javafx.scene.shape.Rectangle;
 
-public class Game1 extends Application
-{
+public class Game1 extends Application {
+
     Long lastNanoTime;
     double updateTime;
 
@@ -37,15 +37,13 @@ public class Game1 extends Application
 
     String inputFile = null;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         if (args.length < 1)
             throw new RuntimeException("Not Enough Args provided");
         launch(args);
     }
 
-    public Grid<Node> readData(String file) throws IOException
-    {
+    public Grid<Node> readData(String file) throws IOException {
         int count = 0;
         Grid<Node> content = new Grid<Node>(rows, cols);
         try(BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -70,11 +68,8 @@ public class Game1 extends Application
         return content;
     }
 
-    private void renderPath(Group root)
-    {
-        for (Node n : grid)
-        {
-
+    private void renderPath(Group root) {
+        for (Node n : grid) {
             int idx = grid.idxFromObj(n);
             Rectangle r = pathRender.get(idx);
             if (path != null && path.contains(n))
@@ -93,11 +88,9 @@ public class Game1 extends Application
         }
     }
 
-    private void renderGrid(Group root)
-    {
+    private void renderGrid(Group root) {
         int idx = 0;
-        for(Node n : grid)
-        {
+        for(Node n : grid) {
             int col = grid.colFromIdx(idx);
             int row = grid.rowFromIdx(idx);
             Rectangle r = gridRender.get(idx);
@@ -109,13 +102,11 @@ public class Game1 extends Application
         }
     }
 
-    private Grid<Rectangle> gridRenderInit(Group root)
-    {
+    private Grid<Rectangle> gridRenderInit(Group root) {
         gridRender = new Grid<Rectangle>(cols, rows);
 
         int idx = 0;
-        for (Node n : grid)
-        {
+        for (Node n : grid) {
             int col = grid.colFromIdx(idx);
             int row = grid.rowFromIdx(idx);
 
@@ -137,13 +128,11 @@ public class Game1 extends Application
         return gridRender;
     }
 
-    private Grid<Rectangle> pathRenderInit(Group root)
-    {
+    private Grid<Rectangle> pathRenderInit(Group root) {
         pathRender = new Grid<Rectangle>(cols, rows);
 
         int idx = 0;
-        for(Node t : grid)
-        {
+        for(Node t : grid) {
             int col = grid.colFromIdx(idx);
             int row = grid.rowFromIdx(idx);
 
@@ -166,20 +155,17 @@ public class Game1 extends Application
     }
 
     @Override
-    public void start(Stage theStage)
-    {
+    public void start(Stage theStage) {
         theStage.setTitle( "Game1 - Pathfinder" );
 
-        try
-        {
+        try {
             System.out.println("Getting Data");
             inputFile = new String(getParameters().getRaw().get(0));
             grid = readData(inputFile);
 
             pathfinder = new AStarPathfinder(grid, start, finish);
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             System.out.println("Could not read file");
         }
 
@@ -205,10 +191,8 @@ public class Game1 extends Application
 
         lastNanoTime = new Long( System.nanoTime() );
 
-        new AnimationTimer()
-        {
-            public void handle(long currentNanoTime)
-            {
+        new AnimationTimer() {
+            public void handle(long currentNanoTime) {
                 // calculate time since last update.
                 double elapsedTime = (currentNanoTime - lastNanoTime) / 1000000000.0;
                 lastNanoTime = currentNanoTime;

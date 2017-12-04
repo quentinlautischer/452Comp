@@ -19,32 +19,26 @@ public class AStarPathfinder {
     HashMap<Node, NodeRecord> closed = new HashMap<>();
     ArrayList<Node> path = null;
 
-    public AStarPathfinder(Grid<Node> grid, Node start, Node finish)
-    {
+    public AStarPathfinder(Grid<Node> grid, Node start, Node finish) {
         this.start = start;
         this.finish = finish;
         this.grid = grid;
         heuristic = new Heuristic(grid, finish);
     }
 
-    public NodeRecord getCurrent()
-    {
+    public NodeRecord getCurrent() {
         return current;
     }
 
-    public HashMap<Node, NodeRecord> getClosed()
-    {
+    public HashMap<Node, NodeRecord> getClosed() {
         return closed;
     }
 
-    public OpenList getOpen()
-    {
+    public OpenList getOpen() {
         return open;
     }
 
-
-    public boolean isPathFound()
-    {
+    public boolean isPathFound() {
         return !(open.size() > 0) | pathFound;
     }
 
@@ -52,15 +46,12 @@ public class AStarPathfinder {
     public void setupPathFindAStar() {
         NodeRecord startRecord = new NodeRecord(start, heuristic.estimate(start));
         startRecord.setCostSoFar(0);
-
         open.add(startRecord);
     }
 
-    public void pathFindAStartIteration()
-    {
+    public void pathFindAStartIteration() {
         current = open.smallestElement();
-        if (current.getNode() == finish)
-        {
+        if (current.getNode() == finish) {
             pathFound = true;
             return;
         }
@@ -70,9 +61,7 @@ public class AStarPathfinder {
         NodeRecord endNodeRecord;
         int endNodeHeuristic = 0;
 
-
-        for (Node connection : connections)
-        {
+        for (Node connection : connections) {
             Node endNode = connection;
 
             if(connection.getTerrain()==Terrain.OBSTACLE)
@@ -84,8 +73,7 @@ public class AStarPathfinder {
             int endNodeCost = current.getCostSoFar() + (geometric_weight*Terrain.getCost(connection.getTerrain()));
 
 
-            if (closed.containsKey(endNode))
-            {
+            if (closed.containsKey(endNode)) {
                 endNodeRecord = closed.get(endNode);
 
                 if (endNodeRecord.getCostSoFar() <= endNodeCost)
@@ -94,10 +82,8 @@ public class AStarPathfinder {
                 closed.remove(endNode);
 
                 endNodeHeuristic = endNodeRecord.getEstimatedTotalCost() - endNodeRecord.getCostSoFar();
-
             }
-            else if (open.has(endNode))
-            {
+            else if (open.has(endNode)) {
                 endNodeRecord = open.find(endNode);
 
                 if (endNodeRecord.getCostSoFar() <= endNodeCost)
@@ -106,8 +92,7 @@ public class AStarPathfinder {
                 // Supposed to be  IDK what cost is
                 endNodeHeuristic = endNodeCost - endNodeRecord.getCostSoFar();
             }
-            else // Unvisited Node
-            {
+            else { // Unvisited Node
                 endNodeRecord = new NodeRecord(endNode, heuristic.estimate(endNode));
 
                 //might not be needed but I'm thinking so
@@ -127,19 +112,15 @@ public class AStarPathfinder {
         closed.put(current.getNode(), current);
     }
 
-    public ArrayList<Node> getPath()
-    {
-        if (current.getNode() != finish)
-        {
+    public ArrayList<Node> getPath() {
+        if (current.getNode() != finish) {
             return null;
         }
-        else
-        {
+        else {
             ArrayList<Node> path = new ArrayList<Node>();
 
             Node currentNode = current.getNode();
-            while (currentNode != start)
-            {
+            while (currentNode != start) {
                 path.add(currentNode);
                 currentNode = fromNode.get(currentNode);
             }

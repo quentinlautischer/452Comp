@@ -4,11 +4,11 @@ class StateThirsty extends State {
 
   public StateThirsty() {
     transitions = new ArrayList<Transition>() {{
-      add(new TransitionGotWater());
-      add(new TransitionGotPoison());
+      add(TransitionFactory.get(TransitionFactory.TransitionEnum.GOTWATER));
+      add(TransitionFactory.get(TransitionFactory.TransitionEnum.GOTPOISON));
     }};
 
-    action = new ActionRandomMove();
-    exitAction = new ActionEat();
+    action = ActionFactory.get(ActionFactory.ActionEnum.RANDOMMOVE);
+    exitAction = ActionFactory.get(ActionFactory.ActionEnum.EAT);
   }
 }

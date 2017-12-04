@@ -4,10 +4,10 @@ class StateBirthing extends State {
   
   public StateBirthing() {
     transitions = new ArrayList<Transition>() {{
-      add(new TransitionHadBirth());
+      add( TransitionFactory.get(TransitionFactory.TransitionEnum.HADBIRTH));
     }};
 
-    entryAction = new ActionBirth();
-    action = new ActionRandomMove();
+    entryAction = ActionFactory.get(ActionFactory.ActionEnum.BIRTH);
+    action = ActionFactory.get(ActionFactory.ActionEnum.RANDOMMOVE);
   }
 }

@@ -1,11 +1,13 @@
 class TransitionGotHome extends Transition {
-  
-  public TransitionGotHome() {
-    state = new StateBirthing();
-  }
 
   @Override
   public boolean isTriggered(AntFarm tile) {
     return (tile == AntFarm.HOME);
   }
+
+  @Override
+  public State getTargetState() {
+    return StateFactory.get(StateFactory.StateEnum.BIRTHING);
+  }
+
 }

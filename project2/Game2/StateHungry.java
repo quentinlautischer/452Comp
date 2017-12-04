@@ -4,12 +4,12 @@ class StateHungry extends State {
 
   public StateHungry() {
     transitions = new ArrayList<Transition>() {{
-      add(new TransitionGotFood());
-      add(new TransitionGotPoison());
+      add(TransitionFactory.get(TransitionFactory.TransitionEnum.GOTFOOD));
+      add(TransitionFactory.get(TransitionFactory.TransitionEnum.GOTPOISON));
     }};
 
-    action = new ActionRandomMove();
-    exitAction = new ActionEat();
+    action = ActionFactory.get(ActionFactory.ActionEnum.RANDOMMOVE);
+    exitAction = ActionFactory.get(ActionFactory.ActionEnum.EAT);
   }
 
   

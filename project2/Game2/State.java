@@ -4,9 +4,9 @@ class State {
   
   ArrayList<Transition> transitions = new ArrayList<Transition>();
 
-  Action entryAction = new Action();
-  Action exitAction = new Action();
-  Action action = new Action();
+  Action entryAction = ActionFactory.get(ActionFactory.ActionEnum.EMPTY);
+  Action exitAction = ActionFactory.get(ActionFactory.ActionEnum.EMPTY);
+  Action action = ActionFactory.get(ActionFactory.ActionEnum.EMPTY);
 
   public Action getAction() {
     return action;

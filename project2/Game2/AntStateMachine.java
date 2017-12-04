@@ -2,15 +2,7 @@ import java.util.ArrayList;
 
 class AntStateMachine
 {
-  ArrayList<State> states = new ArrayList<State>() {{ 
-    add(new StateHungry());
-    add(new StateHomeBound());
-    add(new StateBirthing());
-    add(new StateThirsty());
-    add(new StateDead());
-  }};
-
-  State currentState = new StateHungry();
+  State currentState = StateFactory.get(StateFactory.StateEnum.HUNGRY);
 
   public State getCurrentState() {
     return currentState;
@@ -33,6 +25,8 @@ class AntStateMachine
 
       actions.add(currentState.getExitAction());
       actions.add(triggeredTransition.getAction());
+      if (targetState == null)
+        System.out.println("TARGET STATE IS NULL");
       actions.add(targetState.getEntryAction());
 
       currentState = targetState;

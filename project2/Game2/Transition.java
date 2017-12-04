@@ -1,17 +1,14 @@
 class Transition
 {
-  State state = new State();
-  Action action = new Action();
-
   public boolean isTriggered(AntFarm tile) {
     return false;
   }
 
   public State getTargetState() {
-    return state;
+    return StateFactory.get(StateFactory.StateEnum.EMPTY);
   }
 
   public Action getAction() {
-    return action;
+    return ActionFactory.get(ActionFactory.ActionEnum.EMPTY);
   }
 }

@@ -4,11 +4,11 @@ class StateHomeBound extends State {
 
   public StateHomeBound() {
     transitions = new ArrayList<Transition>() {{
-      add(new TransitionGotHome());
-      add(new TransitionGotPoison());
+      add(TransitionFactory.get(TransitionFactory.TransitionEnum.GOTHOME));
+      add(TransitionFactory.get(TransitionFactory.TransitionEnum.GOTPOISON));
     }};
 
-    action = new ActionGoHome();
+    action = ActionFactory.get(ActionFactory.ActionEnum.GOHOME);
   }
   
 }

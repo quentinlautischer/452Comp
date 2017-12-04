@@ -1,5 +1,5 @@
 class StateDead extends State {
   public StateDead() {
-    entryAction = new ActionDie();
+    entryAction = ActionFactory.get(ActionFactory.ActionEnum.DIE);
   }
 }

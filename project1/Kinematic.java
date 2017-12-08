@@ -5,12 +5,15 @@ class Kinematic
   public Orientation orientation = new Orientation(0.0);
   public Orientation rotation = new Orientation(0.0);
 
-  public Kinematic(){}
+  public Kinematic(){
+    velocity.x = 0.0;
+    velocity.y = 0.0;
+  }
 
   public double normalize(double x, double y)
   {
-      double max = Math.pow((x * x + y * y), 0.5);
-      return x/max;
+      double z = Math.pow(((x*x) + (y*y)),0.5);
+      return x/z;
   }
 
   public void update(Steering steering, double maxSpeed, double time)
@@ -22,23 +25,19 @@ class Kinematic
     position.y += velocity.y*time;
     orientation.set(orientation.get() + rotation.get()*time);
 
-    System.out.println("X: " + steering.linear.x + " Y: " + steering.linear.y);
-
     velocity.x += steering.linear.x * time;
     velocity.y += steering.linear.y * time;
 
-    if ( Math.abs(velocity.x) > maxSpeed || Math.abs(velocity.y) > maxSpeed)
-    {
-      velocity.x = normalize(velocity.x, velocity.x);
-      velocity.y = normalize(velocity.y, velocity.y);
+    rotation.set(rotation.get() +(steering.angular.get()*time));    
 
+    if ( Math.abs(velocity.x) > maxSpeed | Math.abs(velocity.y) > maxSpeed)
+    {
+      double velx = velocity.x;
+      double vely = velocity.y;
+      velocity.x = normalize(velx, maxSpeed-Math.abs(velx));
+      velocity.y = normalize(vely, maxSpeed-Math.abs(vely));
       velocity.x *= maxSpeed;
       velocity.y *= maxSpeed;
     }
-
-    System.out.println("Vel X: " + velocity.x + " Vel Y: " + velocity.y);
-
-    rotation.set(steering.angular.get() * time*10000000);
-    
   }
 }

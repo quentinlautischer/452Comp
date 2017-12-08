@@ -61,4 +61,4 @@ Dead ants will remain motionless on the map.
 ### Design Decisions
 I decided to implement the decision making scheme using a robust State Machine as demonstrated in pseudo-code in the book. This required a lot of coding and lots of methods but I thought it would be good to go through the workings rather than a hard coded FSM and I wanted more modularity than decision trees could provide.
 
-I did not sort my code into folders but I've setup a structured syntax to the filenames. I have Action<Desc>, State<Desc>, and Transition<Desc>.
+I did not sort my code into folders but I've setup a structured syntax to the filenames. I have Action<Desc>, State<Desc>, and Transition<Desc>. Factories are used to provide one time instantiation of state, action, and transition objects.

@@ -3,31 +3,48 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.paint.Color;
 import java.util.Random;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.geometry.Rectangle2D;
 
 public class Duck
 {
     //Kinematics
     Kinematic kinematic = new Kinematic();
     Kinematic target = new Kinematic();
-    Wander wander = new Wander(kinematic, target);
+    
+    SteeringBase steering = new SteeringBase(kinematic, target);
+    Wander wander = new Wander(1, kinematic, target);
     Arrive arrive = new Arrive(kinematic, target);
     Align align = new Align(kinematic, target);
     Face face = new Face(kinematic, target);
 
     //Render
     int radius = 10;
-    Circle circle = new Circle();
-    TrianglePolygon triangle = new TrianglePolygon(0,0,0,0,0,0);
-    Color color = Color.rgb(255, 211, 0);
-    Random random = new Random(123);
+    Image duck_img = new Image("res/duck.png");
+    ImageView duck_iv = new ImageView();
+    Rectangle2D duck_r = new Rectangle2D(0, 0, 32, 32);
+    Random random = new Random();
 
-    public Duck(Double x, Double y)
+    public Duck(long moveSeed, Double x, Double y)
     {
+        random.setSeed(moveSeed);
+        Wander wander = new Wander(moveSeed, kinematic, target);
+
         kinematic.position.x = x;
         kinematic.position.y = y;
-        circle.setRadius(radius);
-        circle.setFill(color);
-        triangle.setFill(color);
+        
+        duck_iv.setFitWidth(radius*4);
+        duck_iv.setFitHeight(radius*4);
+        duck_iv.setX(x);
+        duck_iv.setY(y);
+        
+        duck_iv.setImage(duck_img);
+        duck_iv.setViewport(duck_r);
+        duck_iv.setFitWidth(radius*4);
+        duck_iv.setFitHeight(radius*4);
+        duck_iv.setSmooth(true);
+        duck_iv.setCache(true);
     }
 
     public void setTarget(Kinematic target)
@@ -41,21 +58,16 @@ public class Duck
 
     public void update(double elapsedTime)
     {
-        kinematic.update(arrive.getSteering(), 25.0, elapsedTime);
+        kinematic.update(wander.getSteering(), 50.0, elapsedTime);
 
-        circle.setCenterX(kinematic.position.x);
-        circle.setCenterY(kinematic.position.y);
-        triangle.setPoint1(kinematic.position.x, kinematic.position.y+(radius*1.5));
-        triangle.setPoint2(kinematic.position.x+radius, kinematic.position.y);
-        triangle.setPoint3(kinematic.position.x-radius, kinematic.position.y);
-        triangle.rotate(kinematic.orientation.get(), kinematic.position.x, kinematic.position.y);
+        duck_iv.setX(kinematic.position.x);
+        duck_iv.setY(kinematic.position.y);
+        duck_iv.setRotate(kinematic.orientation.get());
     }
 
     public void render(Group root)
     {
-        if (!root.getChildren().contains(circle))
-            root.getChildren().add(circle);
-        if (!root.getChildren().contains(triangle))
-            root.getChildren().add(triangle);
+        if (!root.getChildren().contains(duck_iv))
+            root.getChildren().add(duck_iv);
     }
 }

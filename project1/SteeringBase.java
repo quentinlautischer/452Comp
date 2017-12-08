@@ -21,6 +21,6 @@ class SteeringBase implements ISteering
 
   public Steering getSteering()
   {
-    return new Steering();
+    return new Steering(0.0, 0.0, 0.0);
   }
 }

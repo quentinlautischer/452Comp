@@ -20,8 +20,8 @@ import javafx.scene.shape.Polygon;
 
 public class Main extends Application
 {
-    int canvas_height = 800;
-    int canvas_width = 800;
+    int canvas_height = WorldData.getHeight();
+    int canvas_width = WorldData.getWidth();
 
     Long lastNanoTime;
     ArrayList<Duck> ducks = new ArrayList<Duck>();
@@ -89,7 +89,7 @@ public class Main extends Application
 
         lastNanoTime = new Long( System.nanoTime() );
 
-        Duck d = new Duck(500.0, 500.0);
+        Duck d = new Duck(lastNanoTime, 500.0, 500.0);
         d.kinematic.orientation.set(180.0);
         target = d.kinematic;
         d.update(0.0);
@@ -110,7 +110,7 @@ public class Main extends Application
                     MouseEvent e = mouseInput.get(0);
 
                     if (e.isPrimaryButtonDown())
-                        ducks.add(new Duck(e.getX(), e.getY()));
+                        ducks.add(new Duck(lastNanoTime, e.getX(), e.getY()));
                     else if (e.isSecondaryButtonDown())
                         gravityWells.add(new GravityWell(e.getX(), e.getY()));
                     mouseInput.remove(e);

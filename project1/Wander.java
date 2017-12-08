@@ -2,21 +2,28 @@ import java.util.Random;
 
 class Wander extends SteeringBase
 {
-  double wanderOffset = 100.0;
-  double wanderRadius = 100.0;
-  double wanderRate = 0.05;
-  Orientation wanderOrientation = new Orientation(0.0);
-  double maxAccelaration = 1.0;
-  double maxSpeed = 50.0;
-  double maxRotation = 1.0;
+  double wanderOffset = 0.01;
+  double wanderRadius = 400.0;
+  double wanderRate = 10.0;
+  Orientation wanderOrientation = new Orientation(180.0);
+  double maxAccelaration = 5000.0;
+  double maxSpeed = 20.0;
+  double maxRotation = 270.0;
   Random random = new Random();
 
   Face face = null;
 
-  public Wander(Kinematic character, Kinematic target)
+  public Wander(long moveSeed, Kinematic character, Kinematic target)
   {
     super(character, target);
     face = new Face(character, target);
+    random.setSeed(moveSeed);
+  }
+  
+  public void setTarget(Kinematic target)
+  {
+    this.target = target;
+    face.setTarget(target);
   }
 
   private double randomBinomial()
@@ -27,29 +34,39 @@ class Wander extends SteeringBase
 
   public Steering getSteering()
   {
-    wanderOrientation.set(wanderOrientation.get() + randomBinomial()*wanderRate);
-    Orientation targetOrientation = new Orientation(wanderOrientation.get() + character.orientation.get());
-    target.position.x = character.position.x + wanderOffset*character.orientation.getVectorX();
-    target.position.y = character.position.y + wanderOffset*character.orientation.getVectorY();
+    // wanderOrientation.set(wanderOrientation.get() + randomBinomial()*wanderRate);
+    // // target.orientation.set(wanderOrientation.get() + character.orientation.get());
+    // target.position.x += randomBinomial()*wanderOffset;
+    // target.position.y += randomBinomial()*wanderOffset;
+    // target.position.x %= WorldData.getWidth();
+    // if (target.position.x<0) target.position.x += WorldData.getWidth();
+    // target.position.y %= WorldData.getHeight();
+    // if (target.position.y<0) target.position.y += WorldData.getHeight();
 
-    target.position.x += wanderRadius * targetOrientation.getVectorX();
-    target.position.y += wanderRadius * targetOrientation.getVectorY();
+    // target.position.x += wanderRadius * target.orientation.getVectorX();
+    // target.position.y += wanderRadius * target.orientation.getVectorY();
+    character.orientation.set(character.orientation.get() + randomBinomial()*wanderRate);
+    // System.out.println("Target Pos: " + target.position.x + ", " + target.position.y);
 
-    Steering steering = face.getSteering();
+    // Steering steering = face.getSteering();
 
+    // if (steering == null)
+    Steering steering = new Steering();
+    System.out.println("Orientation Vector: " + character.orientation.getVectorX() + ", " + character.orientation.getVectorY());
     steering.linear.x = maxAccelaration*character.orientation.getVectorX();
     steering.linear.y = maxAccelaration*character.orientation.getVectorY();
+    System.out.println("linear Steer: " + steering.linear.x + ", " + steering.linear.y);
 
-    steering.linear.x = character.orientation.getVectorX();
-    steering.linear.y = character.orientation.getVectorY();
-    steering.linear.x *= maxSpeed;
-    steering.linear.y *= maxSpeed;
+    // steering.linear.x = character.orientation.getVectorX();
+    // steering.linear.y = character.orientation.getVectorY();
+    // steering.linear.x *= maxSpeed;
+    // steering.linear.y *= maxSpeed;
 
 
-    double change = randomBinomial();
-    steering.angular.set(change*maxRotation);  
+    // double change = randomBinomial();
+    // steering.angular.set(change*maxRotation);  
     
-    System.out.println("Steering Angular: " + steering.angular.get());
+    // System.out.println("Steering Angular: " + steering.angular.get());
     return steering;
   }
 }

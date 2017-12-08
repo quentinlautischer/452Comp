@@ -46,11 +46,11 @@ class Orientation
 
       double getVectorX()
       {
-        return Math.cos(this.value*(Math.PI/180.0));
+        return Math.cos(this.value*(Math.PI/180.0))*Math.tan(this.value*(Math.PI/180.0));
       }
 
       double getVectorY()
       {
-        return Math.sin(this.value*(Math.PI/180.0));
+        return -Math.cos(this.value*(Math.PI/180.0));
       }
   }

@@ -17,7 +17,7 @@ class Face extends SteeringBase
     double direction_y = target.position.y - character.position.y;
 
     align.target = explicitTarget;
-    align.target.orientation.set(Math.atan2(-direction_x, direction_y)*(180/Math.PI));
+    align.target.orientation.set(Math.atan2(direction_x, -direction_y)*(180/Math.PI));
 
     return align.getSteering();
   }

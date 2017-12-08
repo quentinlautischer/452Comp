@@ -1,5 +1,11 @@
 class Arrive extends SteeringBase
 {
+    double targetRadius = 40.0;
+    double slowRadius = 75.0;
+    double timeToTarget = 1.0;
+    double maxAcceleration = 200.0;
+    double maxSpeed = 50.0;
+
     public Arrive(Kinematic character, Kinematic target)
     {
         super(character, target);
@@ -7,17 +13,12 @@ class Arrive extends SteeringBase
 
     private double normalize(double x, double y)
     {
-        return Math.pow(Math.pow(x,2)+Math.pow(y, 2), 0.5);
+        double z =  Math.pow(Math.pow(x,2)+Math.pow(y, 2), 0.5);
+        return x/z;
     }
 
     public Steering getSteering()
     {
-        double targetRadius = 100.0;
-        double slowRadius = 150.0;
-        double timeToTarget = 1.0;
-        double maxAcceleration = 20.0;
-        double maxSpeed = 50.0;
-
         Steering steering = new Steering();
 
         double directionx = target.position.x - character.position.x;
@@ -36,9 +37,15 @@ class Arrive extends SteeringBase
         double targetVelocityX = directionx;
         double targetVelocityY = directiony;
 
+        double velx = directionx;
+        double vely = directiony;
 
-        targetVelocityX = normalize(targetVelocityX, targetVelocityX);
-        targetVelocityY = normalize(targetVelocityY, targetVelocityY);
+        System.out.println("Steering X,Y " + velx + " " + vely);
+
+        targetVelocityX = normalize(velx, maxSpeed-Math.abs(velx));
+        targetVelocityY = normalize(vely, maxSpeed-Math.abs(vely));
+
+        System.out.println("Steering2 X,Y " + targetVelocityX + " " + targetVelocityY);
 
         targetVelocityX *= targetSpeed;
         targetVelocityY *= targetSpeed;

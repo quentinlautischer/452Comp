@@ -21,10 +21,11 @@ import java.io.FileNotFoundException;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.*;
 
 public class Game1 extends Application
 {
-    int depth = 6;
+    int depth = 9;
     Long lastNanoTime;
     double updateTime;
 
@@ -33,6 +34,9 @@ public class Game1 extends Application
 
     Grid<Tile> grid = new Grid<Tile>(Game1WorldData.rows,Game1WorldData.cols);
     Grid<Circle> gridRender = new Grid<Circle>(Game1WorldData.rows,Game1WorldData.cols);
+
+    Text winLabel = new Text(50, 100, "");
+
 
     public static void main(String[] args)
     {
@@ -55,6 +59,10 @@ public class Game1 extends Application
             gridRender.add(c);
             idx++;
         }
+
+        winLabel.setFont(new Font(50));
+        winLabel.setFill(Color.GREEN);
+        root.getChildren().add(winLabel);
     }
 
     private void renderGrid(Group root)
@@ -94,7 +102,7 @@ public class Game1 extends Application
 
 
     private int minMaxColChoice(MinMaxGridNode node, int depth, TileType type){
-        return minMax(node, depth, type, -Integer.MAX_VALUE, 0).getColChoice();
+        return MinMax.pruneNegamax(node, depth, 0, -Integer.MAX_VALUE, Integer.MAX_VALUE).getColumn();
     }
 
     private boolean gridComplete(Grid<Tile> g){
@@ -103,56 +111,6 @@ public class Game1 extends Application
                 return false;
         }
         return true;
-    }
-
-    private MinMaxGridNode minMax(MinMaxGridNode node, int depth, TileType type, int alpha, int beta){
-        System.out.println(node.getHeuristic());
-        if (depth == 0 || gridComplete(node.getGrid()))
-            return node;
-
-        if (type == TileType.COMPUTER){
-            MinMaxGridNode bestValue = new MinMaxGridNode(null, -Integer.MAX_VALUE, null);
-            if (node.getHeuristic() < alpha)
-                return bestValue;
-            for (int i = 0; i < Game1WorldData.cols; i++){
-                Grid<Tile> tempGrid = cloneGrid(node.getGrid());
-                if (tempGrid.get(i, 0).getType() != TileType.EMPTY)
-                {
-                    System.out.println("Reached top not considering this");
-                    continue;
-                }
-                ConnectFourTileAdder.add(tempGrid, i, TileType.COMPUTER);
-                int heur = ConnectFourHeuristic.getAIHeuristic(tempGrid);
-                MinMaxGridNode child = new MinMaxGridNode(tempGrid, heur, i);
-                MinMaxGridNode v = minMax(child, depth-1, TileType.PLAYER, alpha, beta);
-                if (v.getHeuristic() > bestValue.getHeuristic()){
-                    bestValue = v;
-                    alpha = bestValue.getHeuristic();
-                }
-            }
-            return bestValue;
-        }
-        else {
-            MinMaxGridNode bestValue = new MinMaxGridNode(null, Integer.MAX_VALUE, null);
-            for (int i = 0; i < Game1WorldData.cols; i++){
-                Grid<Tile> tempGrid = cloneGrid(node.getGrid());
-                if (tempGrid.get(i, 0).getType() != TileType.EMPTY){
-                    System.out.println("Reached top not considering this");
-                    continue;
-                }
-                ConnectFourTileAdder.add(tempGrid, i, TileType.PLAYER);
-                int heur = ConnectFourHeuristic.getAIHeuristic(tempGrid);
-                MinMaxGridNode child = new MinMaxGridNode(tempGrid, heur, i);
-                MinMaxGridNode v = minMax(child, depth-1, TileType.COMPUTER, alpha, beta);
-                if (v.getHeuristic() < bestValue.getHeuristic()){
-                    bestValue = v;
-                }
-            }
-            return bestValue;
-        }
-        // 
-        
-        // return bestChoice;
     }
 
     @Override
@@ -182,18 +140,7 @@ public class Game1 extends Application
                     int aiMove = minMaxColChoice(new MinMaxGridNode(cloneGrid(grid), 0, 0), depth, TileType.COMPUTER);
                     System.out.println("AI selected column : " + aiMove);
                     ConnectFourTileAdder.add(grid, aiMove, TileType.COMPUTER);
-                    System.out.println("PLAYER COUNTS: PRI:" 
-                        + ConnectFourHeuristic.countPri(grid, TileType.PLAYER) + " DUO: "
-                        + ConnectFourHeuristic.countDuo(grid, TileType.PLAYER) + " TRI: "
-                        + ConnectFourHeuristic.countTri(grid, TileType.PLAYER) + " TET: "
-                        + ConnectFourHeuristic.countTet(grid, TileType.PLAYER));
-                    System.out.println("COMPUTER COUNTS: PRI:" 
-                        + ConnectFourHeuristic.countPri(grid, TileType.COMPUTER) + " DUO: "
-                        + ConnectFourHeuristic.countDuo(grid, TileType.COMPUTER) + " TRI: "
-                        + ConnectFourHeuristic.countTri(grid, TileType.COMPUTER) + " TET: "
-                        + ConnectFourHeuristic.countTet(grid, TileType.COMPUTER));
-                    System.out.println("");
-                    // Computer move
+
                 }
             });
 
@@ -219,10 +166,10 @@ public class Game1 extends Application
                 
                 // logic
                 if (didPlayerWin()){
-                    System.out.println("PLAYER WON");
+                    winLabel.setText("PLAYER WON");
                 }
                 if (didComputerWin()){
-                    System.out.println("COMPUTER WON");
+                    winLabel.setText("COMPUTER WON");
                 }
 
                 // render

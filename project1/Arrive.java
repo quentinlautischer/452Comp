@@ -40,12 +40,12 @@ class Arrive extends SteeringBase
         double velx = directionx;
         double vely = directiony;
 
-        System.out.println("Steering X,Y " + velx + " " + vely);
+        // System.out.println("Steering X,Y " + velx + " " + vely);
 
         targetVelocityX = normalize(velx, maxSpeed-Math.abs(velx));
         targetVelocityY = normalize(vely, maxSpeed-Math.abs(vely));
 
-        System.out.println("Steering2 X,Y " + targetVelocityX + " " + targetVelocityY);
+        // System.out.println("Steering2 X,Y " + targetVelocityX + " " + targetVelocityY);
 
         targetVelocityX *= targetSpeed;
         targetVelocityY *= targetSpeed;

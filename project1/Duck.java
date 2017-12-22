@@ -14,22 +14,27 @@ public class Duck
     Kinematic target = new Kinematic();
     
     SteeringBase steering = new SteeringBase(kinematic, target);
-    Wander wander = new Wander(1, kinematic, target);
+    Wander wander = new Wander(new Random(), kinematic, target);
     Arrive arrive = new Arrive(kinematic, target);
+    Flee flee = new Flee(kinematic, target);
     Align align = new Align(kinematic, target);
     Face face = new Face(kinematic, target);
+
+    SteeringBase currentSteering = wander;
 
     //Render
     int radius = 10;
     Image duck_img = new Image("res/duck.png");
     ImageView duck_iv = new ImageView();
     Rectangle2D duck_r = new Rectangle2D(0, 0, 32, 32);
-    Random random = new Random();
+    Random random = new Random(System.currentTimeMillis());
+
+    Group root = null;
 
     public Duck(long moveSeed, Double x, Double y)
     {
         random.setSeed(moveSeed);
-        Wander wander = new Wander(moveSeed, kinematic, target);
+        Wander wander = new Wander(random, kinematic, target);
 
         kinematic.position.x = x;
         kinematic.position.y = y;
@@ -47,18 +52,43 @@ public class Duck
         duck_iv.setCache(true);
     }
 
+    public double getX(){
+        return kinematic.position.x;
+    }
+
+    public double getY(){
+        return kinematic.position.y;
+    }
+
+    public void die(){
+        if (root.getChildren().contains(duck_iv))
+            root.getChildren().remove(duck_iv);
+    }
+
+    public void scare(){
+        currentSteering = flee;
+    }
+
+    public void wander(){
+        currentSteering = wander;
+    }
+
     public void setTarget(Kinematic target)
     {
         this.target = target;
-        wander.setTarget(this.target);
-        face.setTarget(this.target);
-        arrive.setTarget(this.target);
-        align.setTarget(this.target);
+        if (this.target != null){
+            arrive.setTarget(this.target);    
+            currentSteering = arrive;
+        } else {
+            currentSteering = wander;
+        }
+        // face.setTarget(this.target);
+        // align.setTarget(this.target);
     }
 
     public void update(double elapsedTime)
     {
-        kinematic.update(wander.getSteering(), 50.0, elapsedTime);
+        kinematic.update(currentSteering.getSteering(), 50.0, elapsedTime);
 
         duck_iv.setX(kinematic.position.x);
         duck_iv.setY(kinematic.position.y);
@@ -67,6 +97,7 @@ public class Duck
 
     public void render(Group root)
     {
+        this.root = root;
         if (!root.getChildren().contains(duck_iv))
             root.getChildren().add(duck_iv);
     }

@@ -9,15 +9,15 @@ class Wander extends SteeringBase
   double maxAccelaration = 5000.0;
   double maxSpeed = 20.0;
   double maxRotation = 270.0;
-  Random random = new Random();
+  Random random = null;
 
   Face face = null;
 
-  public Wander(long moveSeed, Kinematic character, Kinematic target)
+  public Wander(Random rand, Kinematic character, Kinematic target)
   {
     super(character, target);
     face = new Face(character, target);
-    random.setSeed(moveSeed);
+    this.random = rand;
   }
   
   public void setTarget(Kinematic target)
@@ -52,10 +52,10 @@ class Wander extends SteeringBase
 
     // if (steering == null)
     Steering steering = new Steering();
-    System.out.println("Orientation Vector: " + character.orientation.getVectorX() + ", " + character.orientation.getVectorY());
+    // System.out.println("Orientation Vector: " + character.orientation.getVectorX() + ", " + character.orientation.getVectorY());
     steering.linear.x = maxAccelaration*character.orientation.getVectorX();
     steering.linear.y = maxAccelaration*character.orientation.getVectorY();
-    System.out.println("linear Steer: " + steering.linear.x + ", " + steering.linear.y);
+    // System.out.println("linear Steer: " + steering.linear.x + ", " + steering.linear.y);
 
     // steering.linear.x = character.orientation.getVectorX();
     // steering.linear.y = character.orientation.getVectorY();

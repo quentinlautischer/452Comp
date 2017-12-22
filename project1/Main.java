@@ -14,22 +14,26 @@ import javafx.scene.input.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.*;
 
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import javafx.scene.text.*;
 
 public class Main extends Application
 {
     int canvas_height = WorldData.getHeight();
     int canvas_width = WorldData.getWidth();
 
+    Text countLabel = null;
+
     Long lastNanoTime;
-    ArrayList<Duck> ducks = new ArrayList<Duck>();
-    ArrayList<GravityWell> gravityWells = new ArrayList<GravityWell>();
+    CopyOnWriteArrayList<Duck> ducks = new CopyOnWriteArrayList<Duck>();
+    CopyOnWriteArrayList<GravityWell> gravityWells = new CopyOnWriteArrayList<GravityWell>();
+    GravityWell gravityWell = null;
     Kinematic target = null;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         launch(args);
     }
 
@@ -44,6 +48,13 @@ public class Main extends Application
 
         Canvas canvas = new Canvas( canvas_width, canvas_height );
         root.getChildren().add( canvas );
+
+        countLabel = new Text(canvas_width/2, 40, "0");
+        countLabel.setFont(new Font(40));
+        countLabel.setFill(Color.BLACK);
+        countLabel.setTextAlignment(TextAlignment.JUSTIFY);
+        root.getChildren().add(countLabel);
+
 
         final ArrayList<String> keyboardInput = new ArrayList<String>();
         final ArrayList<MouseEvent> mouseInput = new ArrayList<MouseEvent>();
@@ -89,12 +100,6 @@ public class Main extends Application
 
         lastNanoTime = new Long( System.nanoTime() );
 
-        Duck d = new Duck(lastNanoTime, 500.0, 500.0);
-        d.kinematic.orientation.set(180.0);
-        target = d.kinematic;
-        d.update(0.0);
-        d.render(root);
-
         new AnimationTimer()
         {
             public void handle(long currentNanoTime)
@@ -102,6 +107,7 @@ public class Main extends Application
                 // calculate time since last update.
                 double elapsedTime = (currentNanoTime - lastNanoTime) / 1000000000.0;
                 lastNanoTime = currentNanoTime;
+                double timeInSeconds = (currentNanoTime) / 1000000000.0;
 
                 // game logic
 
@@ -110,21 +116,41 @@ public class Main extends Application
                     MouseEvent e = mouseInput.get(0);
 
                     if (e.isPrimaryButtonDown())
-                        ducks.add(new Duck(lastNanoTime, e.getX(), e.getY()));
+                        ducks.add(new Duck(currentNanoTime/100000, e.getX(), e.getY()));
                     else if (e.isSecondaryButtonDown())
-                        gravityWells.add(new GravityWell(e.getX(), e.getY()));
+                        gravityWell = new GravityWell(timeInSeconds, e.getX(), e.getY(), ducks);
                     mouseInput.remove(e);
                 }
 
-                for (Duck duck : ducks)
-                {
-                    duck.setTarget(target);
+
+
+                for (Duck duck : ducks) {
+                    if (gravityWell != null){
+                        Kinematic target = gravityWell.getKinematic();
+                        duck.setTarget(target);
+                        if (gravityWell.isDetonating()){
+                            duck.scare();
+                        }
+                    }
+
                     duck.update(elapsedTime);
                     duck.kinematic.position.x %= canvas_width;
                     if (duck.kinematic.position.x<0) duck.kinematic.position.x += canvas_width;
                     duck.kinematic.position.y %= canvas_height;
                     if (duck.kinematic.position.y<0) duck.kinematic.position.y += canvas_height;
                 }
+
+                if (gravityWell != null){
+                    gravityWell.update(timeInSeconds);
+                    countLabel.setText(String.valueOf(gravityWell.getCount()));
+                    if (gravityWell.isDead()){
+                        gravityWell = null;
+                        for (Duck duck : ducks) {
+                            duck.wander();
+                        }
+                    }
+                }
+
 
                 // collision detection
 
@@ -133,9 +159,11 @@ public class Main extends Application
                 gc.setFill( Color.GREEN );
                 gc.fillRect(0, 0, 1200, 1200);
                 gc.setStroke( Color.GREEN );
-                for (Duck duck : ducks)
-                {
+                for (Duck duck : ducks){
                     duck.render(root);    
+                }
+                if (gravityWell != null){
+                    gravityWell.render(root);
                 }
             }
         }.start();
